@@ -108,6 +108,33 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     return activityIndicatorView
   }()
 
+  //MARK: - Error handling
+  
+  var reloadButton: UIButton = {
+    let button = UIButton()
+    button.isHidden = true
+    button.setTitle("Reload data", for: .normal)
+    button.backgroundColor = UIColor.white.withAlphaComponent(0.4)
+    button.layer.cornerRadius = 15
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
+    
+    
+    button.addTarget(self, action:#selector(reloadData), for: .touchUpInside)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+  
+  var errorLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Network error"
+    label.textColor = UIColor(red: 0.87, green: 0.05, blue: 0.05, alpha: 1.0)
+    label.isHidden = true
+    label.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
+    label.translatesAutoresizingMaskIntoConstraints = false
+    return label
+  }()
+  
+  
   // MARK: - Functions
   
   override func viewDidLoad() {
@@ -117,6 +144,10 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     view.addSubview(containerView)
     view.addSubview(activityIndicator)
     view.addSubview(tableView);
+    
+    view.addSubview(reloadButton);
+    view.addSubview(errorLabel);
+    
     tableView.dataSource = self;
     tableView.delegate = self;
     
@@ -129,27 +160,39 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     containerView.addSubview(avgNightTemperatureLabel)
     self.addConstraints()
     
-//    let locManager = CLLocationManager()
-//    locManager.requestWhenInUseAuthorization()
-//    if CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() ==  .authorizedAlways
-//    {
-//      currentLocation = locManager.location
-//    }
+    //    let locManager = CLLocationManager()
+    //    locManager.requestWhenInUseAuthorization()
+    //    if CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() ==  .authorizedAlways
+    //    {
+    //      currentLocation = locManager.location
+    //    }
     
+    self.reloadData()
+  }
+  
+  @objc private func reloadData() {
+    errorLabel.isHidden = true
+    reloadButton.isHidden = true
     activityIndicator.startAnimating()
-    apiClient.getWeather(location: currentLocation,completion: {result in
+    apiClient.getWeather(location: currentLocation, completion: {result in
       DispatchQueue.main.async {
         switch (result) {
         case .success(let response):
+          self.errorLabel.isHidden = true
+          self.reloadButton.isHidden = true
           self.dailyForecasts = response.daily
           self.currentDayForecast = response.current
+          self.setupCurrentDay()
+          self.tableView.reloadData()
           break
-        case .failure:
+        case .failure(let error):
+          self.errorLabel.isHidden = false
+          self.reloadButton.isHidden = false
+          self.errorLabel.text = "\(error)"
           self.dailyForecasts = []
+          self.currentDayForecast = nil
           break
         }
-        self.setupCurrentDay()
-        self.tableView.reloadData();
         self.activityIndicator.stopAnimating()
       }
     })
@@ -196,7 +239,24 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
       
       activityIndicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
       activityIndicator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+      
+      errorLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+      errorLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -40),
+      
+      reloadButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+      reloadButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -70),
+      reloadButton.widthAnchor.constraint(equalToConstant: 215),
+      
     ])
+  }
+  
+  func setupCurrentDay() {
+    dayLabel.text = getDayOfWeek(dtFormat: currentDayForecast!.dt)
+    weatherLabel.text = currentDayForecast!.weather[0].main
+    currentTemperatureLabel.text = "\(round(currentDayForecast!.temp*10 - 2730)/10)°"
+    avgDayTemperatureLabel.text = "\(round(dailyForecasts[0].temp.day*10 - 2730)/10)°"
+    avgNightTemperatureLabel.text = "\(round(dailyForecasts[0].temp.night*10 - 2730)/10)°"
+    todayLabel.isHidden = false
   }
   
   //MARK: - Table view delegate
@@ -220,15 +280,5 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 40;
   }
-  
-  //MARK: - Private methods
-  
-  func setupCurrentDay() {
-    dayLabel.text = getDayOfWeek(dtFormat: currentDayForecast!.dt)
-    weatherLabel.text = currentDayForecast!.weather[0].main
-    currentTemperatureLabel.text = "\(round(currentDayForecast!.temp*10 - 2730)/10)°"
-    avgDayTemperatureLabel.text = "\(round(dailyForecasts[0].temp.day*10 - 2730)/10)°"
-    avgNightTemperatureLabel.text = "\(round(dailyForecasts[0].temp.night*10 - 2730)/10)°"
-    todayLabel.isHidden = false
-  }
+
 }

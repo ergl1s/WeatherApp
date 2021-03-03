@@ -31,8 +31,6 @@ class ApiClientImplementation: ApiClient {
     let url = URL(string: "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely,hourly&appid=4e81baace841c3ff4ca0b7fb49aedd2e")
     let urlRequest = URLRequest(url: url!)
     let dataTask = session.dataTask(with: urlRequest as URLRequest, completionHandler: { data, response, error in
-      
-      
       guard let data = data else {
         completion(.failure(ApiError.noData))
         return
