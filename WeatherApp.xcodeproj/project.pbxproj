@@ -14,7 +14,8 @@
 		F951CFDD25EBA11600FB9ADF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F951CFDB25EBA11600FB9ADF /* LaunchScreen.storyboard */; };
 		F951CFE625EBA1AB00FB9ADF /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F951CFE525EBA1AB00FB9ADF /* WeatherViewController.swift */; };
 		F976457A25EE2F0500369C92 /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F976457925EE2F0500369C92 /* ApiClient.swift */; };
-		F976457D25EE2FB600369C92 /* OneDayForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = F976457C25EE2FB600369C92 /* OneDayForecast.swift */; };
+		F976457D25EE2FB600369C92 /* WeatherResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F976457C25EE2FB600369C92 /* WeatherResponse.swift */; };
+		F9D032DF25EF905B00A7720B /* getDayOfWeekFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D032DE25EF905B00A7720B /* getDayOfWeekFunc.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +28,8 @@
 		F951CFDE25EBA11600FB9ADF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F951CFE525EBA1AB00FB9ADF /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
 		F976457925EE2F0500369C92 /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
-		F976457C25EE2FB600369C92 /* OneDayForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDayForecast.swift; sourceTree = "<group>"; };
+		F976457C25EE2FB600369C92 /* WeatherResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherResponse.swift; sourceTree = "<group>"; };
+		F9D032DE25EF905B00A7720B /* getDayOfWeekFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getDayOfWeekFunc.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +70,8 @@
 				F951CFE525EBA1AB00FB9ADF /* WeatherViewController.swift */,
 				F9119C9B25ED4835006D5D22 /* WeatherTableViewCell.swift */,
 				F976457925EE2F0500369C92 /* ApiClient.swift */,
-				F976457C25EE2FB600369C92 /* OneDayForecast.swift */,
+				F976457C25EE2FB600369C92 /* WeatherResponse.swift */,
+				F9D032DE25EF905B00A7720B /* getDayOfWeekFunc.swift */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -142,8 +145,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F976457D25EE2FB600369C92 /* OneDayForecast.swift in Sources */,
+				F976457D25EE2FB600369C92 /* WeatherResponse.swift in Sources */,
 				F9119C9C25ED4835006D5D22 /* WeatherTableViewCell.swift in Sources */,
+				F9D032DF25EF905B00A7720B /* getDayOfWeekFunc.swift in Sources */,
 				F951CFE625EBA1AB00FB9ADF /* WeatherViewController.swift in Sources */,
 				F951CFD125EBA11500FB9ADF /* AppDelegate.swift in Sources */,
 				F951CFD325EBA11500FB9ADF /* SceneDelegate.swift in Sources */,

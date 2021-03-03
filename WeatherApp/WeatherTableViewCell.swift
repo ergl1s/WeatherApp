@@ -11,7 +11,6 @@ class WeatherTableViewCell: UITableViewCell {
   
   var dayLabel: UILabel = {
     let label = UILabel()
-    label.text = "Monday"
     label.textColor = UIColor.white
     //label.font = UIFont.systemFont(ofSize: 17, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -67,10 +66,10 @@ class WeatherTableViewCell: UITableViewCell {
       weatherImage.centerXAnchor.constraint(equalTo: self.centerXAnchor),
       weatherImage.centerYAnchor.constraint(equalTo: self.centerYAnchor),
       
-      avgDayTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -70),
+      avgDayTemperatureLabel.trailingAnchor.constraint(equalTo: avgNightTemperatureLabel.leadingAnchor, constant: -15),
       avgDayTemperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
       
-      avgNightTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
+      avgNightTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
       avgNightTemperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
     ])
   }
@@ -80,17 +79,6 @@ class WeatherTableViewCell: UITableViewCell {
   }
 
   override func setSelected(_ selected: Bool, animated: Bool) {
-    super.setSelected(false, animated: animated)
-  }
-
-  
-  //MARK: - Private functions
-  
-func getDayOfWeek(dtFormat:Int) -> String {
-    let date = Date(timeIntervalSince1970: Double(dtFormat))
-    let dateFormatter = DateFormatter()
-//  dateFormatter.timeZone = .current
-    dateFormatter.dateFormat = "EEEE"
-    return dateFormatter.string(from: date)
+    super.setSelected(false, animated: false)
   }
 }
