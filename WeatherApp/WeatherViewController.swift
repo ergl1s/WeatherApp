@@ -15,6 +15,15 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   let apiClient: ApiClient = ApiClientImplementation()
   var currentLocation: CLLocation?
   
+  let WeatherDict:[String:String] = [
+    "Thunderstorm":"cloud.bolt.rain.fill",
+    "Drizzle":"cloud.drizzle.fill",
+    "Rain":"cloud.rain.fill",
+    "Snow":"cloud.snow.fill",
+    "Clear":"sun.max.fill",
+    "Clouds":"cloud.fill"
+  ]
+  
   // MARK: - Subviews setup
   var containerView: UIView = {
     let view = UIView()
@@ -117,8 +126,6 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     button.backgroundColor = UIColor.white.withAlphaComponent(0.4)
     button.layer.cornerRadius = 15
     button.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
-    
-    
     button.addTarget(self, action:#selector(reloadData), for: .touchUpInside)
     button.translatesAutoresizingMaskIntoConstraints = false
     return button
@@ -159,43 +166,13 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     containerView.addSubview(avgDayTemperatureLabel)
     containerView.addSubview(avgNightTemperatureLabel)
     self.addConstraints()
-    
+    self.reloadData()
     //    let locManager = CLLocationManager()
     //    locManager.requestWhenInUseAuthorization()
     //    if CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() ==  .authorizedAlways
     //    {
     //      currentLocation = locManager.location
     //    }
-    
-    self.reloadData()
-  }
-  
-  @objc private func reloadData() {
-    errorLabel.isHidden = true
-    reloadButton.isHidden = true
-    activityIndicator.startAnimating()
-    apiClient.getWeather(location: currentLocation, completion: {result in
-      DispatchQueue.main.async {
-        switch (result) {
-        case .success(let response):
-          self.errorLabel.isHidden = true
-          self.reloadButton.isHidden = true
-          self.dailyForecasts = response.daily
-          self.currentDayForecast = response.current
-          self.setupCurrentDay()
-          self.tableView.reloadData()
-          break
-        case .failure(let error):
-          self.errorLabel.isHidden = false
-          self.reloadButton.isHidden = false
-          self.errorLabel.text = "\(error)"
-          self.dailyForecasts = []
-          self.currentDayForecast = nil
-          break
-        }
-        self.activityIndicator.stopAnimating()
-      }
-    })
   }
   
   func addConstraints() {
@@ -225,12 +202,12 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
       
       todayLabel.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: 5),
       todayLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+     
+      avgNightTemperatureLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+      avgNightTemperatureLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
       
       avgDayTemperatureLabel.trailingAnchor.constraint(equalTo: avgNightTemperatureLabel.leadingAnchor, constant: -10),
       avgDayTemperatureLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
-      
-      avgNightTemperatureLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
-      avgNightTemperatureLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
       
       tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
       tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -250,13 +227,65 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     ])
   }
   
+  @objc private func reloadData() {
+    showLoading()
+    apiClient.getWeather(location: currentLocation, completion: {result in
+      DispatchQueue.main.async {
+        switch (result) {
+        case .success(let response):
+          self.showData()
+          self.dailyForecasts = response.daily
+          self.currentDayForecast = response.current
+          break
+        case .failure(let error):
+          self.showError(error: error)
+          self.dailyForecasts = []
+          self.currentDayForecast = nil
+          break
+        }
+        self.setupCurrentDay()
+        self.tableView.reloadData()
+      }
+    })
+  }
+  
+  private func showLoading() {
+    errorLabel.isHidden = true
+    reloadButton.isHidden = true
+    activityIndicator.startAnimating()
+  }
+  
+  private func showData() {
+    self.errorLabel.isHidden = true
+    self.reloadButton.isHidden = true
+    activityIndicator.stopAnimating()
+  }
+  
+  private func showError(error: Error) {
+    self.errorLabel.isHidden = false
+    self.reloadButton.isHidden = false
+    self.errorLabel.text = "\(error)"
+    activityIndicator.stopAnimating()
+  }
+  
   func setupCurrentDay() {
+    if (currentDayForecast == nil) {
+      return
+    }
     dayLabel.text = getDayOfWeek(dtFormat: currentDayForecast!.dt)
     weatherLabel.text = currentDayForecast!.weather[0].main
     currentTemperatureLabel.text = "\(round(currentDayForecast!.temp*10 - 2730)/10)°"
     avgDayTemperatureLabel.text = "\(round(dailyForecasts[0].temp.day*10 - 2730)/10)°"
     avgNightTemperatureLabel.text = "\(round(dailyForecasts[0].temp.night*10 - 2730)/10)°"
     todayLabel.isHidden = false
+  }
+  
+  private func getDayOfWeek(dtFormat:Int) -> String {
+    let date = Date(timeIntervalSince1970: Double(dtFormat))
+    let dateFormatter = DateFormatter()
+    dateFormatter.timeZone = .current
+    dateFormatter.dateFormat = "EEEE"
+    return dateFormatter.string(from: date)
   }
   
   //MARK: - Table view delegate
@@ -266,19 +295,25 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell: WeatherTableViewCell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! WeatherTableViewCell
-    
-    
+  
     let daily = dailyForecasts[indexPath.row + 1]
     cell.avgDayTemperatureLabel.text = "\(round(daily.temp.day*10 - 2730)/10)°"
     cell.avgNightTemperatureLabel.text = "\(round(daily.temp.night*10 - 2730)/10)°"
-    
+    cell.weatherImage.image = getImageForWeather(weather: daily.weather[0].main)
     cell.dayLabel.text = getDayOfWeek(dtFormat: daily.dt)
-    
     return cell;
   }
   
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 40;
   }
-
+  
+  func getImageForWeather(weather: String) -> UIImage {
+    let imageConfig = UIImage.SymbolConfiguration(pointSize: 24)
+    if let imageName = WeatherDict[weather] {
+      return UIImage(systemName: imageName, withConfiguration: imageConfig)!
+    } else {
+      return UIImage(systemName: "wind", withConfiguration: imageConfig)!
+    }
+  }
 }

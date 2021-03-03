@@ -12,13 +12,13 @@ class WeatherTableViewCell: UITableViewCell {
   var dayLabel: UILabel = {
     let label = UILabel()
     label.textColor = UIColor.white
-    //label.font = UIFont.systemFont(ofSize: 17, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
   
   var weatherImage: UIImageView = {
-    let imageView = UIImageView(image: UIImage.init(systemName: "cloud.sun.fill"))
+    let imageView = UIImageView()
+//    let imageView = UIImageView(image: UIImage.init(systemName: "cloud.sun.fill"))
     imageView.tintColor = UIColor.white;
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView;
@@ -27,7 +27,7 @@ class WeatherTableViewCell: UITableViewCell {
   var avgDayTemperatureLabel: UILabel = {
     let label = UILabel()
     label.textColor = UIColor.white
-    label.font = UIFont.systemFont(ofSize: 20, weight: .light)
+    label.font = UIFont.systemFont(ofSize: 19, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -35,7 +35,7 @@ class WeatherTableViewCell: UITableViewCell {
   var avgNightTemperatureLabel: UILabel = {
     let label = UILabel()
     label.textColor = UIColor.systemGray4
-    label.font = UIFont.systemFont(ofSize: 20, weight: .light)
+    label.font = UIFont.systemFont(ofSize: 19, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -57,8 +57,6 @@ class WeatherTableViewCell: UITableViewCell {
     addSubview(avgNightTemperatureLabel)
     addSubview(avgDayTemperatureLabel)
     addSubview(avgNightTemperatureLabel)
-  
-    
     NSLayoutConstraint.activate([
       dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
       dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
@@ -79,6 +77,7 @@ class WeatherTableViewCell: UITableViewCell {
   }
 
   override func setSelected(_ selected: Bool, animated: Bool) {
-    super.setSelected(false, animated: false)
+    super.setSelected(selected, animated: animated)
+    selectionStyle = .none
   }
 }
