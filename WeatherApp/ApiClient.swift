@@ -17,16 +17,15 @@ protocol ApiClient {
 }
 
 class ApiClientImplementation: ApiClient {
-  var lat : Double = 53.441792
-  var lon : Double = 27.037689
+  var lat : Double = 0
+  var lon : Double = 0
   
   func getWeather(location: CLLocation?, completion: @escaping (Result<WeatherResponse, Error>) -> ()) {
     let session = URLSession.shared
     
-//    if (location.) {
-//      lat = location.coordinate.longitude
-//      lon = location.coordinate.longitude
-//    }
+    lat = Double(location!.coordinate.longitude)
+    lon = Double(location!.coordinate.longitude)
+  
     
     let url = URL(string: "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely,hourly&appid=4e81baace841c3ff4ca0b7fb49aedd2e")
     let urlRequest = URLRequest(url: url!)

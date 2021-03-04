@@ -8,12 +8,14 @@
 import UIKit
 import Foundation
 import CoreLocation
+import MapKit
 
-class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
   var currentDayForecast: Current?
   var dailyForecasts: [Daily] = []
   let apiClient: ApiClient = ApiClientImplementation()
-  var currentLocation: CLLocation?
+  var location: CLLocation?
+  var locManager = CLLocationManager()
   
   let WeatherDict:[String:String] = [
     "Thunderstorm":"cloud.bolt.rain.fill",
@@ -33,7 +35,6 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   
   var townLabel: UILabel = {
     let label = UILabel()
-    label.text = "Minsk"
     label.textColor = UIColor.white
     label.font = UIFont.systemFont(ofSize: 40, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -133,7 +134,7 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   
   var errorLabel: UILabel = {
     let label = UILabel()
-    label.text = "Network error"
+    label.numberOfLines = 5
     label.textColor = UIColor(red: 0.87, green: 0.05, blue: 0.05, alpha: 1.0)
     label.isHidden = true
     label.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
@@ -165,14 +166,8 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     containerView.addSubview(todayLabel)
     containerView.addSubview(avgDayTemperatureLabel)
     containerView.addSubview(avgNightTemperatureLabel)
-    self.addConstraints()
-    self.reloadData()
-    //    let locManager = CLLocationManager()
-    //    locManager.requestWhenInUseAuthorization()
-    //    if CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() ==  .authorizedAlways
-    //    {
-    //      currentLocation = locManager.location
-    //    }
+    addConstraints()
+    setupLocationService()
   }
   
   func addConstraints() {
@@ -186,7 +181,6 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
       containerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
       containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
       containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-      
       
       townLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       townLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 50),
@@ -219,17 +213,28 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
       
       errorLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
       errorLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -40),
+      errorLabel.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -70),
       
       reloadButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
       reloadButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -70),
       reloadButton.widthAnchor.constraint(equalToConstant: 215),
-      
     ])
+  }
+  
+  func setupLocationService() {
+    locManager.delegate = self
+    if (CLLocationManager.locationServicesEnabled()) {
+      locManager = CLLocationManager()
+      locManager.delegate = self
+      locManager.desiredAccuracy = kCLLocationAccuracyBest
+      locManager.requestAlwaysAuthorization()
+      locManager.startUpdatingLocation()
+    }
   }
   
   @objc private func reloadData() {
     showLoading()
-    apiClient.getWeather(location: currentLocation, completion: {result in
+    apiClient.getWeather(location: location, completion: {result in
       DispatchQueue.main.async {
         switch (result) {
         case .success(let response):
@@ -288,14 +293,13 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     return dateFormatter.string(from: date)
   }
   
-  //MARK: - Table view delegate
+  //MARK: - TableView delegate
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return dailyForecasts.count != 0 ? 5 : 0;
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell: WeatherTableViewCell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! WeatherTableViewCell
-  
     let daily = dailyForecasts[indexPath.row + 1]
     cell.avgDayTemperatureLabel.text = "\(round(daily.temp.day*10 - 2730)/10)°"
     cell.avgNightTemperatureLabel.text = "\(round(daily.temp.night*10 - 2730)/10)°"
@@ -308,6 +312,17 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     return 40;
   }
   
+  //MARK: - Others
+  
+  func setupTownLabelFromLocation() {
+    location?.fetchCity{ city, error in
+      guard let city = city, error == nil else {
+        return
+      }
+      self.townLabel.text = city
+    }
+  }
+  
   func getImageForWeather(weather: String) -> UIImage {
     let imageConfig = UIImage.SymbolConfiguration(pointSize: 24)
     if let imageName = WeatherDict[weather] {
@@ -316,4 +331,18 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
       return UIImage(systemName: "wind", withConfiguration: imageConfig)!
     }
   }
+  
+//MARK: - Location Manager delegate
+  
+  func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    location = locations.last! as CLLocation
+    setupTownLabelFromLocation()
+    reloadData()
+  }
+}
+
+extension CLLocation {
+    func fetchCity(completion: @escaping (_ city: String?, _ error: Error?) -> ()) {
+        CLGeocoder().reverseGeocodeLocation(self) {completion($0?.first?.locality, $1)}
+    }
 }

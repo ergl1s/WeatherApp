@@ -2,12 +2,10 @@ import Foundation
 
 // MARK: - WeatherResponse
 struct WeatherResponse: Codable {
-    let timezone: String
     let current: Current
     let daily: [Daily]
 
     enum CodingKeys: String, CodingKey {
-        case timezone
         case current, daily
     }
 }

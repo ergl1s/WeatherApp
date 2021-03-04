@@ -18,7 +18,6 @@ class WeatherTableViewCell: UITableViewCell {
   
   var weatherImage: UIImageView = {
     let imageView = UIImageView()
-//    let imageView = UIImageView(image: UIImage.init(systemName: "cloud.sun.fill"))
     imageView.tintColor = UIColor.white;
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView;
