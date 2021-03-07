@@ -9,6 +9,8 @@ import UIKit
 
 class WeatherTableViewCell: UITableViewCell {
   
+  static let identifier: String = "cellId"
+  
   var dayLabel: UILabel = {
     let label = UILabel()
     label.textColor = UIColor.white

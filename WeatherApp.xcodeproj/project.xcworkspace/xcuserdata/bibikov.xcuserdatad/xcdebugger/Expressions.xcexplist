@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "WeatherViewController.locationManager(_:didFailWithError:):WeatherViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "locManager.authorizationStatus">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "WeatherViewController.viewDidLoad():WeatherViewController.swift">
          <PersistentStrings>
             <PersistentString

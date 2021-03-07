@@ -10,8 +10,6 @@ import Foundation
 import CoreLocation
 import MapKit
 
-
-
 class WeatherViewController: UIViewController {
   var currentDayForecast: Current?
   var dailyForecasts: [Daily]?
@@ -96,7 +94,7 @@ class WeatherViewController: UIViewController {
   
   var tableView: UITableView = {
     let theTableView = UITableView()
-    theTableView.register(WeatherTableViewCell.self, forCellReuseIdentifier: "cellId")
+    theTableView.register(WeatherTableViewCell.self, forCellReuseIdentifier: WeatherTableViewCell.identifier)
     theTableView.backgroundColor = UIColor.clear;
     theTableView.translatesAutoresizingMaskIntoConstraints = false
     theTableView.separatorStyle = UITableViewCell.SeparatorStyle.none;
@@ -127,7 +125,6 @@ class WeatherViewController: UIViewController {
   
   var errorLabel: UILabel = {
     let label = UILabel()
-    label.numberOfLines = 5
     label.textColor = UIColor(red: 0.87, green: 0.05, blue: 0.05, alpha: 1.0)
     label.isHidden = true
     label.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
@@ -214,7 +211,6 @@ class WeatherViewController: UIViewController {
   }
   
   func setupLocationService() {
-    locManager.delegate = self
     if (CLLocationManager.locationServicesEnabled()) {
       locManager = CLLocationManager()
       locManager.delegate = self
@@ -300,8 +296,6 @@ class WeatherViewController: UIViewController {
     todayLabel.isHidden = false
   }
   
-  
-  
   func setupTownLabelFromLocation() {
     guard let location = location else {return}
     location.fetchCity{ city, error in
@@ -309,6 +303,31 @@ class WeatherViewController: UIViewController {
         return
       }
       self.townLabel.text = city
+    }
+  }
+  
+  func showAlertWithSettingsButton() {
+    let alertController = UIAlertController (title: "Location wasn't allowed", message: "App doesn't work without location services. Please, go to settings -> privacy -> location services and allow the use of location", preferredStyle: .alert)
+
+    let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+            return
+        }
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.open(settingsUrl)
+        }
+    }
+    alertController.addAction(settingsAction)
+    let cancelAction = UIAlertAction(title: "Cancel", style: .default) {
+      (_) -> Void in
+      if (self.location == nil && self.locManager.authorizationStatus != .notDetermined) {
+        self.showAlertWithSettingsButton()
+      }
+    }
+    alertController.addAction(cancelAction)
+    if (self.presentedViewController == nil) {
+      present(alertController, animated: true, completion: nil)
     }
   }
 }
@@ -324,7 +343,7 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell: WeatherTableViewCell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! WeatherTableViewCell
+    let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath) as! WeatherTableViewCell
     guard let dailyForecasts = dailyForecasts else {
       return cell;
     }
@@ -340,8 +359,16 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension WeatherViewController: CLLocationManagerDelegate {
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-    location = locations.last! as CLLocation
-    setupTownLabelFromLocation()
-    reloadData()
+      location = locations.last
+      setupTownLabelFromLocation()
+      reloadData()
+    }
+
+  
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    guard let error = error as? CLError else {return}
+    if (error.code == CLError.denied && locManager.authorizationStatus == .denied) {
+      self.showAlertWithSettingsButton()
+    }
   }
 }
