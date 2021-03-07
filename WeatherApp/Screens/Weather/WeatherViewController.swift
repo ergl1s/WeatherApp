@@ -13,7 +13,7 @@ import MapKit
 class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
   var currentDayForecast: Current?
   var dailyForecasts: [Daily] = []
-  let apiClient: ApiClient = ApiClientImplementation()
+  let apiClient: ApiManager = ApiManager()
   var location: CLLocation?
   var locManager = CLLocationManager()
   
@@ -32,7 +32,7 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
-  
+ 
   var townLabel: UILabel = {
     let label = UILabel()
     label.textColor = UIColor.white
@@ -213,7 +213,6 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
       
       errorLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
       errorLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -40),
-      errorLabel.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -70),
       
       reloadButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
       reloadButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -70),
@@ -261,15 +260,40 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   }
   
   private func showData() {
-    self.errorLabel.isHidden = true
-    self.reloadButton.isHidden = true
+    errorLabel.isHidden = true
+    reloadButton.isHidden = true
+    townLabel.isHidden = false;
+    weatherLabel.isHidden = false
+    currentTemperatureLabel.isHidden = false
+    dayLabel.isHidden = false
+    todayLabel.isHidden = false
+    avgDayTemperatureLabel.isHidden = false
+    avgNightTemperatureLabel.isHidden = false
+    tableView.isHidden = false
     activityIndicator.stopAnimating()
   }
   
+  private func hideData() {
+    townLabel.isHidden = true;
+    weatherLabel.isHidden = true
+    currentTemperatureLabel.isHidden = true
+    dayLabel.isHidden = true
+    todayLabel.isHidden = true
+    avgDayTemperatureLabel.isHidden = true
+    avgNightTemperatureLabel.isHidden = true
+    tableView.isHidden = true
+  }
+  
   private func showError(error: Error) {
-    self.errorLabel.isHidden = false
-    self.reloadButton.isHidden = false
-    self.errorLabel.text = "\(error)"
+    errorLabel.isHidden = false
+    reloadButton.isHidden = false
+    hideData()
+    guard let error = error as? ApiError else {
+      errorLabel.text = "Unknown error"
+      return
+    }
+    let textOfError = error.getTextOfError()
+    errorLabel.text = textOfError
     activityIndicator.stopAnimating()
   }
   
@@ -341,8 +365,4 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   }
 }
 
-extension CLLocation {
-    func fetchCity(completion: @escaping (_ city: String?, _ error: Error?) -> ()) {
-        CLGeocoder().reverseGeocodeLocation(self) {completion($0?.first?.locality, $1)}
-    }
-}
+
