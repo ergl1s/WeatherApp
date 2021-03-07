@@ -10,23 +10,7 @@ import Foundation
 import CoreLocation
 import MapKit
 
-enum WeatherType: String {
-  case Thunderstorm, Drizzle, Rain, Snow, Clear, Clouds, Wind
-  func getImage() -> UIImage {
-    var imageName: String
-    switch self {
-      case .Thunderstorm: imageName = "cloud.bolt.rain.fill"
-      case .Drizzle: imageName = "cloud.drizzle.fill"
-      case .Rain: imageName = "cloud.rain.fill"
-      case .Snow: imageName = "cloud.snow.fill"
-      case .Clear: imageName = "sun.max.fill"
-      case .Clouds: imageName = "cloud.fill"
-      default: imageName = "wind"
-    }
-    let imageConfig = UIImage.SymbolConfiguration(pointSize: 24)
-    return UIImage(systemName: imageName, withConfiguration: imageConfig)!
-  }
-}
+
 
 class WeatherViewController: UIViewController {
   var currentDayForecast: Current?
@@ -316,13 +300,7 @@ class WeatherViewController: UIViewController {
     todayLabel.isHidden = false
   }
   
-  private func getDayOfWeek(dtFormat:Int) -> String {
-    let date = Date(timeIntervalSince1970: Double(dtFormat))
-    let dateFormatter = DateFormatter()
-    dateFormatter.timeZone = .current
-    dateFormatter.dateFormat = "EEEE"
-    return dateFormatter.string(from: date)
-  }
+  
   
   func setupTownLabelFromLocation() {
     guard let location = location else {return}
@@ -341,7 +319,7 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
     if (dailyForecasts.count > 5) {
       return 5;
     } else {
-      return dailyForecasts.count;
+      return dailyForecasts.count - 1;
     }
   }
   
@@ -350,11 +328,8 @@ extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
     guard let dailyForecasts = dailyForecasts else {
       return cell;
     }
-    let daily = dailyForecasts[indexPath.row + 1]
-    cell.avgDayTemperatureLabel.text = "\(round(daily.temp.day*10 - 2730)/10)°"
-    cell.avgNightTemperatureLabel.text = "\(round(daily.temp.night*10 - 2730)/10)°"
-    cell.weatherImage.image = WeatherType(rawValue: daily.weather[0].main)?.getImage();
-    cell.dayLabel.text = getDayOfWeek(dtFormat: daily.dt)
+    ///because first day is a current day
+    cell.configure(daily: dailyForecasts[indexPath.row + 1])
     return cell;
   }
   

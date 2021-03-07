@@ -8,19 +8,6 @@
 import Foundation
 import CoreLocation
 
-enum ApiError: Error {
-  case noData, noResponse, errorFromServer
-  func getTextOfError() -> String {
-    var textOfError: String
-    switch self {
-    case .errorFromServer: textOfError = "Error from Server"
-    case .noData: textOfError = "Error with Data"
-    case .noResponse: textOfError = "Error with Resposne"
-    }
-    return textOfError
-  }
-}
-
 class ApiManager {
   var lat : Double = 0
   var lon : Double = 0

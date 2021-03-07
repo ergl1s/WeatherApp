@@ -16,6 +16,9 @@
 		F976457A25EE2F0500369C92 /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F976457925EE2F0500369C92 /* ApiManager.swift */; };
 		F976457D25EE2FB600369C92 /* WeatherResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F976457C25EE2FB600369C92 /* WeatherResponse.swift */; };
 		F9DBE96225F53C6600956717 /* CLLocation+fetchCity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBE96125F53C6600956717 /* CLLocation+fetchCity.swift */; };
+		F9DBE96925F5590000956717 /* GetDayOfTheWeekByDT.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBE96825F5590000956717 /* GetDayOfTheWeekByDT.swift */; };
+		F9DBE96D25F559ED00956717 /* ApiErrorEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBE96C25F559ED00956717 /* ApiErrorEnum.swift */; };
+		F9DBE97025F559FC00956717 /* WeatherTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBE96F25F559FC00956717 /* WeatherTypeEnum.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +33,9 @@
 		F976457925EE2F0500369C92 /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
 		F976457C25EE2FB600369C92 /* WeatherResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherResponse.swift; sourceTree = "<group>"; };
 		F9DBE96125F53C6600956717 /* CLLocation+fetchCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocation+fetchCity.swift"; sourceTree = "<group>"; };
+		F9DBE96825F5590000956717 /* GetDayOfTheWeekByDT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetDayOfTheWeekByDT.swift; sourceTree = "<group>"; };
+		F9DBE96C25F559ED00956717 /* ApiErrorEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorEnum.swift; sourceTree = "<group>"; };
+		F9DBE96F25F559FC00956717 /* WeatherTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTypeEnum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +85,8 @@
 			isa = PBXGroup;
 			children = (
 				F976457C25EE2FB600369C92 /* WeatherResponse.swift */,
+				F9DBE96C25F559ED00956717 /* ApiErrorEnum.swift */,
+				F9DBE96F25F559FC00956717 /* WeatherTypeEnum.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -120,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				F9DBE96125F53C6600956717 /* CLLocation+fetchCity.swift */,
+				F9DBE96825F5590000956717 /* GetDayOfTheWeekByDT.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -194,12 +203,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9DBE96225F53C6600956717 /* CLLocation+fetchCity.swift in Sources */,
+				F9DBE96D25F559ED00956717 /* ApiErrorEnum.swift in Sources */,
 				F976457D25EE2FB600369C92 /* WeatherResponse.swift in Sources */,
 				F9119C9C25ED4835006D5D22 /* WeatherTableViewCell.swift in Sources */,
 				F951CFE625EBA1AB00FB9ADF /* WeatherViewController.swift in Sources */,
 				F951CFD125EBA11500FB9ADF /* AppDelegate.swift in Sources */,
 				F951CFD325EBA11500FB9ADF /* SceneDelegate.swift in Sources */,
+				F9DBE97025F559FC00956717 /* WeatherTypeEnum.swift in Sources */,
 				F976457A25EE2F0500369C92 /* ApiManager.swift in Sources */,
+				F9DBE96925F5590000956717 /* GetDayOfTheWeekByDT.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

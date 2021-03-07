@@ -45,10 +45,10 @@ class WeatherTableViewCell: UITableViewCell {
   
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
-    setupCell()
+    setupCellLayout()
   }
   
-  func setupCell() {
+  func setupCellLayout() {
     self.backgroundColor = UIColor.clear;
     
     addSubview(dayLabel)
@@ -69,6 +69,13 @@ class WeatherTableViewCell: UITableViewCell {
       avgNightTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
       avgNightTemperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
     ])
+  }
+  
+  func configure(daily: Daily) {
+    avgDayTemperatureLabel.text = "\(round(daily.temp.day*10 - 2730)/10)°"
+    avgNightTemperatureLabel.text = "\(round(daily.temp.night*10 - 2730)/10)°"
+    weatherImage.image = WeatherType(rawValue: daily.weather[0].main)?.getImage();
+    dayLabel.text = getDayOfWeek(dtFormat: daily.dt)
   }
   
   override func awakeFromNib() {
