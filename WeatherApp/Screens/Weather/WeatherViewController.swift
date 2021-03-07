@@ -10,21 +10,30 @@ import Foundation
 import CoreLocation
 import MapKit
 
-class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
+enum WeatherType: String {
+  case Thunderstorm, Drizzle, Rain, Snow, Clear, Clouds, Wind
+  func getImage() -> UIImage {
+    var imageName: String
+    switch self {
+      case .Thunderstorm: imageName = "cloud.bolt.rain.fill"
+      case .Drizzle: imageName = "cloud.drizzle.fill"
+      case .Rain: imageName = "cloud.rain.fill"
+      case .Snow: imageName = "cloud.snow.fill"
+      case .Clear: imageName = "sun.max.fill"
+      case .Clouds: imageName = "cloud.fill"
+      default: imageName = "wind"
+    }
+    let imageConfig = UIImage.SymbolConfiguration(pointSize: 24)
+    return UIImage(systemName: imageName, withConfiguration: imageConfig)!
+  }
+}
+
+class WeatherViewController: UIViewController {
   var currentDayForecast: Current?
-  var dailyForecasts: [Daily] = []
+  var dailyForecasts: [Daily]?
   let apiClient: ApiManager = ApiManager()
   var location: CLLocation?
   var locManager = CLLocationManager()
-  
-  let WeatherDict:[String:String] = [
-    "Thunderstorm":"cloud.bolt.rain.fill",
-    "Drizzle":"cloud.drizzle.fill",
-    "Rain":"cloud.rain.fill",
-    "Snow":"cloud.snow.fill",
-    "Clear":"sun.max.fill",
-    "Clouds":"cloud.fill"
-  ]
   
   // MARK: - Subviews setup
   var containerView: UIView = {
@@ -298,12 +307,10 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   }
   
   func setupCurrentDay() {
-    if (currentDayForecast == nil) {
-      return
-    }
-    dayLabel.text = getDayOfWeek(dtFormat: currentDayForecast!.dt)
-    weatherLabel.text = currentDayForecast!.weather[0].main
-    currentTemperatureLabel.text = "\(round(currentDayForecast!.temp*10 - 2730)/10)°"
+    guard let currentDayForecast = currentDayForecast, let dailyForecasts = dailyForecasts else {return;}
+    dayLabel.text = getDayOfWeek(dtFormat: currentDayForecast.dt)
+    weatherLabel.text = currentDayForecast.weather[0].main
+    currentTemperatureLabel.text = "\(round(currentDayForecast.temp*10 - 2730)/10)°"
     avgDayTemperatureLabel.text = "\(round(dailyForecasts[0].temp.day*10 - 2730)/10)°"
     avgNightTemperatureLabel.text = "\(round(dailyForecasts[0].temp.night*10 - 2730)/10)°"
     todayLabel.isHidden = false
@@ -317,17 +324,36 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
     return dateFormatter.string(from: date)
   }
   
-  //MARK: - TableView delegate
+  func setupTownLabelFromLocation() {
+    guard let location = location else {return}
+    location.fetchCity{ city, error in
+      guard let city = city, error == nil else {
+        return
+      }
+      self.townLabel.text = city
+    }
+  }
+}
+
+extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return dailyForecasts.count != 0 ? 5 : 0;
+    guard let dailyForecasts = dailyForecasts else {return 0}
+    if (dailyForecasts.count > 5) {
+      return 5;
+    } else {
+      return dailyForecasts.count;
+    }
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell: WeatherTableViewCell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! WeatherTableViewCell
+    guard let dailyForecasts = dailyForecasts else {
+      return cell;
+    }
     let daily = dailyForecasts[indexPath.row + 1]
     cell.avgDayTemperatureLabel.text = "\(round(daily.temp.day*10 - 2730)/10)°"
     cell.avgNightTemperatureLabel.text = "\(round(daily.temp.night*10 - 2730)/10)°"
-    cell.weatherImage.image = getImageForWeather(weather: daily.weather[0].main)
+    cell.weatherImage.image = WeatherType(rawValue: daily.weather[0].main)?.getImage();
     cell.dayLabel.text = getDayOfWeek(dtFormat: daily.dt)
     return cell;
   }
@@ -335,34 +361,12 @@ class WeatherViewController: UIViewController, UITableViewDelegate, UITableViewD
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 40;
   }
-  
-  //MARK: - Others
-  
-  func setupTownLabelFromLocation() {
-    location?.fetchCity{ city, error in
-      guard let city = city, error == nil else {
-        return
-      }
-      self.townLabel.text = city
-    }
-  }
-  
-  func getImageForWeather(weather: String) -> UIImage {
-    let imageConfig = UIImage.SymbolConfiguration(pointSize: 24)
-    if let imageName = WeatherDict[weather] {
-      return UIImage(systemName: imageName, withConfiguration: imageConfig)!
-    } else {
-      return UIImage(systemName: "wind", withConfiguration: imageConfig)!
-    }
-  }
-  
-//MARK: - Location Manager delegate
-  
+}
+
+extension WeatherViewController: CLLocationManagerDelegate {
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     location = locations.last! as CLLocation
     setupTownLabelFromLocation()
     reloadData()
   }
 }
-
-
