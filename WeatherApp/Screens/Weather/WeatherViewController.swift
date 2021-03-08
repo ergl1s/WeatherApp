@@ -11,8 +11,8 @@ import CoreLocation
 import MapKit
 
 class WeatherViewController: UIViewController {
-  var currentDayForecast: Current?
   var dailyForecasts: [Daily]?
+  var weatherResponse: WeatherResponse?
   let apiClient: ApiManager = ApiManager()
   var location: CLLocation?
   var locManager = CLLocationManager()
@@ -228,12 +228,12 @@ class WeatherViewController: UIViewController {
         case .success(let response):
           self.showData()
           self.dailyForecasts = response.daily
-          self.currentDayForecast = response.current
+          self.weatherResponse = response
           break
         case .failure(let error):
           self.showError(error: error)
           self.dailyForecasts = []
-          self.currentDayForecast = nil
+          self.weatherResponse = nil
           break
         }
         self.setupCurrentDay()
@@ -287,12 +287,12 @@ class WeatherViewController: UIViewController {
   }
   
   func setupCurrentDay() {
-    guard let currentDayForecast = currentDayForecast, let dailyForecasts = dailyForecasts else {return;}
-    dayLabel.text = getDayOfWeek(dtFormat: currentDayForecast.dt)
-    weatherLabel.text = currentDayForecast.weather[0].main
-    currentTemperatureLabel.text = "\(round(currentDayForecast.temp*10 - 2730)/10)°"
-    avgDayTemperatureLabel.text = "\(round(dailyForecasts[0].temp.day*10 - 2730)/10)°"
-    avgNightTemperatureLabel.text = "\(round(dailyForecasts[0].temp.night*10 - 2730)/10)°"
+    guard let weatherResponse = weatherResponse else {return;}
+    dayLabel.text = weatherResponse.getCurrentDay()
+    weatherLabel.text = weatherResponse.getCurrentWeather()
+    currentTemperatureLabel.text = weatherResponse.getCurrentTemperature()
+    avgDayTemperatureLabel.text = weatherResponse.getCurrentAvgDayTemperature()
+    avgNightTemperatureLabel.text = weatherResponse.getCurrentAvgNightTemperature()
     todayLabel.isHidden = false
   }
   
@@ -323,6 +323,8 @@ class WeatherViewController: UIViewController {
       (_) -> Void in
       if (self.location == nil && self.locManager.authorizationStatus != .notDetermined) {
         self.showAlertWithSettingsButton()
+      } else if (self.locManager.authorizationStatus == .notDetermined) {
+        self.locManager.requestAlwaysAuthorization()
       }
     }
     alertController.addAction(cancelAction)

@@ -74,10 +74,10 @@ class WeatherTableViewCell: UITableViewCell {
   }
   
   func configure(daily: Daily) {
-    avgDayTemperatureLabel.text = "\(round(daily.temp.day*10 - 2730)/10)°"
-    avgNightTemperatureLabel.text = "\(round(daily.temp.night*10 - 2730)/10)°"
-    weatherImage.image = WeatherType(rawValue: daily.weather[0].main)?.getImage();
-    dayLabel.text = getDayOfWeek(dtFormat: daily.dt)
+    avgDayTemperatureLabel.text = daily.getAvgDayTemperature();
+    avgNightTemperatureLabel.text = daily.getAvgNightTemperature();
+    weatherImage.image = WeatherType(rawValue: daily.getWeather())?.getImage();
+    dayLabel.text = daily.getDay()
   }
   
   override func awakeFromNib() {

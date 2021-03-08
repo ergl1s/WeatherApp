@@ -15,6 +15,8 @@
 		F951CFE625EBA1AB00FB9ADF /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F951CFE525EBA1AB00FB9ADF /* WeatherViewController.swift */; };
 		F976457A25EE2F0500369C92 /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F976457925EE2F0500369C92 /* ApiManager.swift */; };
 		F976457D25EE2FB600369C92 /* WeatherResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F976457C25EE2FB600369C92 /* WeatherResponse.swift */; };
+		F99B98F825F61162003AA6A0 /* PathTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = F99B98F725F61162003AA6A0 /* PathTypeEnum.swift */; };
+		F99B98FB25F612DC003AA6A0 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F99B98FA25F612DC003AA6A0 /* AppConstants.swift */; };
 		F9DBE96225F53C6600956717 /* CLLocation+fetchCity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBE96125F53C6600956717 /* CLLocation+fetchCity.swift */; };
 		F9DBE96925F5590000956717 /* GetDayOfTheWeekByDT.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBE96825F5590000956717 /* GetDayOfTheWeekByDT.swift */; };
 		F9DBE96D25F559ED00956717 /* ApiErrorEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBE96C25F559ED00956717 /* ApiErrorEnum.swift */; };
@@ -32,6 +34,8 @@
 		F951CFE525EBA1AB00FB9ADF /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
 		F976457925EE2F0500369C92 /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
 		F976457C25EE2FB600369C92 /* WeatherResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherResponse.swift; sourceTree = "<group>"; };
+		F99B98F725F61162003AA6A0 /* PathTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathTypeEnum.swift; sourceTree = "<group>"; };
+		F99B98FA25F612DC003AA6A0 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		F9DBE96125F53C6600956717 /* CLLocation+fetchCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocation+fetchCity.swift"; sourceTree = "<group>"; };
 		F9DBE96825F5590000956717 /* GetDayOfTheWeekByDT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetDayOfTheWeekByDT.swift; sourceTree = "<group>"; };
 		F9DBE96C25F559ED00956717 /* ApiErrorEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiErrorEnum.swift; sourceTree = "<group>"; };
@@ -69,14 +73,14 @@
 			isa = PBXGroup;
 			children = (
 				F9DBE96025F53C3F00956717 /* Helpers */,
-				F954E23325F5204C00BDFFE6 /* Managers */,
+				F954E22F25F51FE000BDFFE6 /* Models */,
 				F954E23025F51FFC00BDFFE6 /* Screens */,
+				F954E23325F5204C00BDFFE6 /* Managers */,
 				F951CFD025EBA11500FB9ADF /* AppDelegate.swift */,
 				F951CFD225EBA11500FB9ADF /* SceneDelegate.swift */,
 				F951CFD925EBA11600FB9ADF /* Assets.xcassets */,
 				F951CFDB25EBA11600FB9ADF /* LaunchScreen.storyboard */,
 				F951CFDE25EBA11600FB9ADF /* Info.plist */,
-				F954E22F25F51FE000BDFFE6 /* Models */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -84,6 +88,7 @@
 		F954E22F25F51FE000BDFFE6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F99B98FA25F612DC003AA6A0 /* AppConstants.swift */,
 				F976457C25EE2FB600369C92 /* WeatherResponse.swift */,
 				F9DBE96C25F559ED00956717 /* ApiErrorEnum.swift */,
 				F9DBE96F25F559FC00956717 /* WeatherTypeEnum.swift */,
@@ -120,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				F976457925EE2F0500369C92 /* ApiManager.swift */,
+				F99B98F725F61162003AA6A0 /* PathTypeEnum.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -209,6 +215,8 @@
 				F951CFE625EBA1AB00FB9ADF /* WeatherViewController.swift in Sources */,
 				F951CFD125EBA11500FB9ADF /* AppDelegate.swift in Sources */,
 				F951CFD325EBA11500FB9ADF /* SceneDelegate.swift in Sources */,
+				F99B98FB25F612DC003AA6A0 /* AppConstants.swift in Sources */,
+				F99B98F825F61162003AA6A0 /* PathTypeEnum.swift in Sources */,
 				F9DBE97025F559FC00956717 /* WeatherTypeEnum.swift in Sources */,
 				F976457A25EE2F0500369C92 /* ApiManager.swift in Sources */,
 				F9DBE96925F5590000956717 /* GetDayOfTheWeekByDT.swift in Sources */,

@@ -9,17 +9,16 @@ import Foundation
 import CoreLocation
 
 class ApiManager {
-  var lat : Double = 0
-  var lon : Double = 0
-  
   func getWeather(location: CLLocation?, completion: @escaping (Result<WeatherResponse, Error>) -> ()) {
     let session = URLSession.shared
     
-    lat = Double(location!.coordinate.longitude)
-    lon = Double(location!.coordinate.longitude)
+    guard let lat = location?.coordinate.latitude, let lon = location?.coordinate.longitude else {
+      completion(.failure(ApiError.noLocation))
+      return
+    }
     
-    let url = URL(string: "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely,hourly&appid=4e81baace841c3ff4ca0b7fb49aedd2e")
-    let urlRequest = URLRequest(url: url!)
+    let urlRequest = PathType.current(lat: String(lat), lon: String(lon), apiKey: AppConstants.apiKey).request
+    
     let dataTask = session.dataTask(with: urlRequest as URLRequest, completionHandler: { data, response, error in
       if let error = error {
         completion(.failure(error))
