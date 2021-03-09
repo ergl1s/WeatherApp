@@ -35,7 +35,7 @@ class WeatherTableViewCell: UITableViewCell {
   
   var avgNightTemperatureLabel: UILabel = {
     let label = UILabel()
-    label.textColor = UIColor.systemGray4
+    label.textColor = UIColor.white.withAlphaComponent(0.7)
     label.font = UIFont.systemFont(ofSize: 19, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label

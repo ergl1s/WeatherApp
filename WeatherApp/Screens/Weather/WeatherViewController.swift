@@ -59,8 +59,8 @@ class WeatherViewController: UIViewController {
   var todayLabel: UILabel = {
     let label = UILabel()
     label.text = "Today"
-    label.isHidden = true;
-    label.textColor = UIColor.systemGray4
+    label.isHidden = true
+    label.textColor = UIColor.white.withAlphaComponent(0.7)
     label.font = UIFont.systemFont(ofSize: 20, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
@@ -76,7 +76,7 @@ class WeatherViewController: UIViewController {
   
   var avgNightTemperatureLabel: UILabel = {
     let label = UILabel()
-    label.textColor = UIColor.systemGray4
+    label.textColor = UIColor.white.withAlphaComponent(0.7)
     label.font = UIFont.systemFont(ofSize: 20, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
@@ -98,6 +98,7 @@ class WeatherViewController: UIViewController {
     theTableView.backgroundColor = UIColor.clear;
     theTableView.translatesAutoresizingMaskIntoConstraints = false
     theTableView.separatorStyle = UITableViewCell.SeparatorStyle.none;
+    theTableView.isScrollEnabled = false;
     return theTableView
   }()
   
