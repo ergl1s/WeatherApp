@@ -9,17 +9,17 @@ import UIKit
 
 class WeatherTableViewCell: UITableViewCell {
   
+  static let identifier: String = "cellId"
+  
   var dayLabel: UILabel = {
     let label = UILabel()
-    label.text = "Monday"
     label.textColor = UIColor.white
-    //label.font = UIFont.systemFont(ofSize: 17, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
   
   var weatherImage: UIImageView = {
-    let imageView = UIImageView(image: UIImage.init(systemName: "cloud.sun.fill"))
+    let imageView = UIImageView()
     imageView.tintColor = UIColor.white;
     imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView;
@@ -28,15 +28,15 @@ class WeatherTableViewCell: UITableViewCell {
   var avgDayTemperatureLabel: UILabel = {
     let label = UILabel()
     label.textColor = UIColor.white
-    label.font = UIFont.systemFont(ofSize: 20, weight: .light)
+    label.font = UIFont.systemFont(ofSize: 19, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
   
   var avgNightTemperatureLabel: UILabel = {
     let label = UILabel()
-    label.textColor = UIColor.systemGray4
-    label.font = UIFont.systemFont(ofSize: 20, weight: .light)
+    label.textColor = UIColor.white.withAlphaComponent(0.7)
+    label.font = UIFont.systemFont(ofSize: 19, weight: .light)
     label.translatesAutoresizingMaskIntoConstraints = false
     return label
   }()
@@ -47,10 +47,10 @@ class WeatherTableViewCell: UITableViewCell {
   
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
-    setupCell()
+    setupCellLayout()
   }
   
-  func setupCell() {
+  func setupCellLayout() {
     self.backgroundColor = UIColor.clear;
     
     addSubview(dayLabel)
@@ -58,8 +58,6 @@ class WeatherTableViewCell: UITableViewCell {
     addSubview(avgNightTemperatureLabel)
     addSubview(avgDayTemperatureLabel)
     addSubview(avgNightTemperatureLabel)
-  
-    
     NSLayoutConstraint.activate([
       dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
       dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
@@ -67,12 +65,19 @@ class WeatherTableViewCell: UITableViewCell {
       weatherImage.centerXAnchor.constraint(equalTo: self.centerXAnchor),
       weatherImage.centerYAnchor.constraint(equalTo: self.centerYAnchor),
       
-      avgDayTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -70),
+      avgDayTemperatureLabel.trailingAnchor.constraint(equalTo: avgNightTemperatureLabel.leadingAnchor, constant: -15),
       avgDayTemperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
       
-      avgNightTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
+      avgNightTemperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
       avgNightTemperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
     ])
+  }
+  
+  func configure(daily: Daily) {
+    avgDayTemperatureLabel.text = daily.getAvgDayTemperature();
+    avgNightTemperatureLabel.text = daily.getAvgNightTemperature();
+    weatherImage.image = WeatherType(rawValue: daily.getWeather())?.getImage();
+    dayLabel.text = daily.getDay()
   }
   
   override func awakeFromNib() {
@@ -80,17 +85,7 @@ class WeatherTableViewCell: UITableViewCell {
   }
 
   override func setSelected(_ selected: Bool, animated: Bool) {
-    super.setSelected(false, animated: animated)
-  }
-
-  
-  //MARK: - Private functions
-  
-func getDayOfWeek(dtFormat:Int) -> String {
-    let date = Date(timeIntervalSince1970: Double(dtFormat))
-    let dateFormatter = DateFormatter()
-//  dateFormatter.timeZone = .current
-    dateFormatter.dateFormat = "EEEE"
-    return dateFormatter.string(from: date)
+    super.setSelected(selected, animated: animated)
+    selectionStyle = .none
   }
 }
